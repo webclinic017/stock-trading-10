@@ -1,4 +1,4 @@
-from backend.stock_trading.models import User
+from backend.stock_trading.models import User, Account, Position
 
 
 class Result:
@@ -80,4 +80,45 @@ class RealTimeResult(Result):
         return {
             'trade_date_list': self.trade_date_list,
             'data_list': self.data_list,
+        }
+
+
+class AccountResult(Result):
+    def __init__(self, account=Account):
+        self.account = account
+
+    def as_dict(self):
+        return {
+            'account_id': self.account.account_id,
+            'asset': self.account.asset,
+            'market_value': self.account.market_value,
+            'money_rest': self.account.money_rest,
+
+        }
+
+
+class PositionResult(Result):
+    def __init__(self, count=None, market_value=None, profit_loss=None):
+        self.count = count
+        self.market_value = market_value
+        self.profit_loss = profit_loss
+
+    def as_dict(self):
+        return {
+            'count': self.count,
+            'market_value': self.market_value,
+            'profit_loss': self.profit_loss,
+        }
+
+class OrderResult(Result):
+    def __init__(self, count=None, deal_value=None, buy_count=None):
+        self.count = count
+        self.deal_value = deal_value
+        self.buy_count = buy_count
+
+    def as_dict(self):
+        return {
+            'count': self.count,
+            'deal_value': self.deal_value,
+            'buy_count': self.buy_count,
         }

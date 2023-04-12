@@ -76,7 +76,7 @@ def date_deal(start_date, end_date):
     if start_date:
         start_date = datetime.fromtimestamp(start_date / 1000).strftime('%Y%m%d')
     else:
-        start_date = '20210101'
+        start_date = '20230101'
     if end_date:
         end_date = datetime.fromtimestamp(end_date / 1000).strftime('%Y%m%d')
     else:

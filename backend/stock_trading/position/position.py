@@ -4,7 +4,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from ..models import Position, Account, Order
 from .. import db
 from ..utils.util import get_order_code, get_market
-from ..utils import Response, PageResult
+from ..utils import Response, PageResult, PositionResult
 from flask import session as flask_session
 
 bp = Blueprint('stock-position', __name__, url_prefix='/v1/position')
@@ -138,4 +138,17 @@ def sell_stock():
         response = Response("200", "sell stock success")
     finally:
         session.close()
+    return jsonify(response.as_dict())
+
+
+@bp.route('/all', methods=('POST',))
+def get_position_all():
+    account_id = flask_session.get('account_id')
+    positions = session.query(Position).filter_by(account_id=account_id).all()
+    count = len(positions)
+    market_value = sum([p.market_value for p in positions])
+    profit_loss = sum([p.profit_loss for p in positions])
+    result = PositionResult(count, market_value, profit_loss)
+    response = Response(200, "get position success", result, "success")
+
     return jsonify(response.as_dict())

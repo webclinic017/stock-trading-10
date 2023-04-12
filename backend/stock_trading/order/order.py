@@ -1,7 +1,8 @@
 from flask import (Blueprint, jsonify, request)
 from ..models import Order
 from .. import db
-from ..utils import Response, PageResult
+from flask import session as flask_session
+from ..utils import Response, OrderResult
 
 bp = Blueprint('order-info', __name__, url_prefix='/v1/order')
 
@@ -9,13 +10,14 @@ session = db.session
 
 
 @bp.route('/list', methods=('POST',))
-def get_stock_info():
+def get_order_info():
     page = request.json.get('page')
     pageSize = request.json.get('pageSize')
     order_no = request.json.get('order_no')
     type = request.json.get('type')
     status = request.json.get('status')
-    query = session.query(Order)
+    user_id = flask_session.get('user_id')
+    query = session.query(Order).filter_by(user_id=user_id)
 
     if order_no:
         query = query.filter_by(order_no=order_no)
@@ -31,4 +33,17 @@ def get_stock_info():
         result = PageResult(orders_dict, page, orders.pages, pageSize)
         response = Response(200, "get orders success", result, "success")
 
+    return jsonify(response.as_dict())
+
+
+@bp.route('/all', methods=('POST',))
+def get_order_all():
+    user_id = flask_session.get('user_id')
+    orders = session.query(Order).filter_by(user_id=user_id).all()
+    buy_orders = session.query(Order).filter_by(user_id=user_id, type='buy').all()
+    count = len(orders)
+    deal_value = sum([o.deal_value for o in orders])
+    buy_count = len(buy_orders)
+    result = OrderResult(count, deal_value, buy_count)
+    response = Response(200, "get orders success", result, "success")
     return jsonify(response.as_dict())
