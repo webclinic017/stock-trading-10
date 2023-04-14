@@ -22,14 +22,39 @@
 </template>
 
 <script lang="ts" setup>
-  import { reactive, ref } from 'vue';
+  import { onMounted, reactive, ref } from 'vue';
   import { BasicTable } from '@/components/Table';
   import { BasicForm, FormSchema, useForm } from '@/components/Form';
   import { columns } from './columns';
   import { ResultEnum } from '@/enums/httpEnum';
   import { getDtlInfo } from '@/api/quotation/quotation';
+  import { getStockNames } from '@/api/stock/stock';
 
   const actionRef = ref();
+  let stockNames = [];
+  const validatorTsCode = (rule, value, callback) => {
+    if (!value) {
+      callback();
+      return;
+    }
+    const regex = /^\d{6}(\.(SH|SZ))?$/;
+    if (regex.test(value)) {
+      callback();
+    } else {
+      callback(new Error('请输入正确的股票代码，比如000001.SZ'));
+    }
+  };
+  const validatorStockName = (rule, value, callback) => {
+    if (!value) {
+      callback();
+      return;
+    }
+    if (stockNames.includes(value)) {
+      callback();
+    } else {
+      callback(new Error('请输入正确的股票名称'));
+    }
+  };
 
   // schemas
   const schemasParams = reactive({
@@ -47,6 +72,19 @@
           console.log(e);
         },
       },
+      rules: [{ validator: validatorTsCode, trigger: ['blur', 'input'] }],
+    },
+    {
+      field: 'name',
+      component: 'NInput',
+      label: '股票名称',
+      componentProps: {
+        placeholder: '请输入股票名称',
+        onInput: (e: any) => {
+          console.log(e);
+        },
+      },
+      rules: [{ validator: validatorStockName, trigger: 'blur' }],
     },
     {
       field: 'trade_date',
@@ -102,6 +140,15 @@
 
   function handleReset(values: Recordable) {
     console.log(values);
+  }
+  onMounted(() => {
+    getStocks();
+  });
+  async function getStocks() {
+    const res = await getStockNames();
+    if (res.code == ResultEnum.SUCCESS) {
+      stockNames = res.result.stock_name;
+    }
   }
 </script>
 

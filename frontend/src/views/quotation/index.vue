@@ -47,7 +47,7 @@
   import { getDailyKLine, getWeeklyKLine, getMonthlyKLine } from '@/api/quotation/quotation';
   import { getStockNames } from '@/api/stock/stock';
   import { ResultEnum } from '@/enums/httpEnum';
-  let stockNames = ['平安银行', '万科A', '中国平安', '招商银行'];
+  let stockNames = [];
   const validatorTsCode = (rule, value, callback) => {
     if (!value) {
       callback();
@@ -61,6 +61,10 @@
     }
   };
   const validatorStockName = (rule, value, callback) => {
+    if (!value) {
+      callback();
+      return;
+    }
     if (stockNames.includes(value)) {
       callback();
     } else {

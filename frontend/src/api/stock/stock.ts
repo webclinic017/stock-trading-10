@@ -85,7 +85,7 @@ export function sellStock(params) {
   );
 }
 /**
- * @description: 卖出股票
+ * @description: 获得全部的股票名称
  */
 export function getStockNames() {
   return http.request<BasicResponseModel>(

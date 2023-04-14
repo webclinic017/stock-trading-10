@@ -88,12 +88,12 @@ def date_deal(start_date, end_date):
 
 
 def get_front_params():
-    ts_code = request.json.get('ts_code', '000001.SZ')
+    ts_code = request.json.get('ts_code')
     name = request.json.get('name')
     stock = session.query(Stock).filter_by(name=name).first()
     if stock:
         # stock和ts_code不一致
-        if ts_code != '' and ts_code != stock.ts_code:
+        if not (ts_code is None or ts_code == '') and ts_code != stock.ts_code:
             return None, None, None
         else:
             ts_code = stock.ts_code

@@ -14,10 +14,13 @@ def get_stock_info():
     page = request.json.get('page')
     pageSize = request.json.get('pageSize')
     ts_code = request.json.get('ts_code')
+    name = request.json.get('name')
     trade_date = request.json.get('trade_date')
     query = session.query(Dtl)
     if ts_code:
         query = query.filter_by(ts_code=ts_code)
+    if name:
+        query = query.filter_by(name=name)
     if trade_date:
         query = query.filter_by(trade_date=datetime.fromtimestamp(trade_date/1000).strftime('%Y%m%d'))
 
