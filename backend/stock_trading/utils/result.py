@@ -110,6 +110,7 @@ class PositionResult(Result):
             'profit_loss': self.profit_loss,
         }
 
+
 class OrderResult(Result):
     def __init__(self, count=None, deal_value=None, buy_count=None):
         self.count = count
@@ -121,4 +122,14 @@ class OrderResult(Result):
             'count': self.count,
             'deal_value': self.deal_value,
             'buy_count': self.buy_count,
+        }
+
+
+class StockNameResult(Result):
+    def __init__(self, stock_name=None):
+        self.stock_name = stock_name
+
+    def as_dict(self):
+        return {
+            'stock_name': self.stock_name,
         }

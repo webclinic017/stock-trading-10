@@ -3,7 +3,7 @@ from flask import (Blueprint, jsonify, request)
 from ..utils.util import get_market_value
 from ..models import Stock, Account
 from .. import db
-from ..utils import Response, PageResult, Result
+from ..utils import Response, PageResult, StockNameResult
 from ..utils.result import MarketPriceResult
 
 bp = Blueprint('stock-info-trading', __name__, url_prefix='/v1/stock')
@@ -48,4 +48,15 @@ def get_market_price():
     else:
         market_price_result = MarketPriceResult(market_price, money_rest)
         response = Response(200, "get stocks success", market_price_result, "success")
+    return jsonify(response.as_dict())
+
+
+@bp.route('/stock_names', methods=('POST',))
+def get_stock_names():
+    stock_names = [row[0] for row in session.query(Stock.name).all()]
+    result = StockNameResult(stock_names)
+    if len(stock_names) == 0:
+        response = Response("fail", "get no stock")
+    else:
+        response = Response(200, "get stocks success", result, "success")
     return jsonify(response.as_dict())

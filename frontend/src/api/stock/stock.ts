@@ -69,12 +69,29 @@ export function buyStock(params) {
     }
   );
 }
+/**
+ * @description: 卖出股票
+ */
 export function sellStock(params) {
   return http.request<BasicResponseModel>(
     {
       url: '/v1/position/sell',
       method: 'POST',
       params,
+    },
+    {
+      isTransformResponse: false,
+    }
+  );
+}
+/**
+ * @description: 卖出股票
+ */
+export function getStockNames() {
+  return http.request<BasicResponseModel>(
+    {
+      url: '/v1/stock/stock_names',
+      method: 'POST',
     },
     {
       isTransformResponse: false,

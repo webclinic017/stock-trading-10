@@ -45,7 +45,28 @@
   import WeeklyKLine from '@/views/quotation/components/WeeklyKLine.vue';
   import MonthlyKLine from '@/views/quotation/components/MonthlyKLine.vue';
   import { getDailyKLine, getWeeklyKLine, getMonthlyKLine } from '@/api/quotation/quotation';
+  import { getStockNames } from '@/api/stock/stock';
   import { ResultEnum } from '@/enums/httpEnum';
+  let stockNames = ['平安银行', '万科A', '中国平安', '招商银行'];
+  const validatorTsCode = (rule, value, callback) => {
+    if (!value) {
+      callback();
+      return;
+    }
+    const regex = /^\d{6}(\.(SH|SZ))?$/;
+    if (regex.test(value)) {
+      callback();
+    } else {
+      callback(new Error('请输入正确的股票代码，比如000001.SZ'));
+    }
+  };
+  const validatorStockName = (rule, value, callback) => {
+    if (stockNames.includes(value)) {
+      callback();
+    } else {
+      callback(new Error('请输入正确的股票名称'));
+    }
+  };
   const chartsParams = reactive({
     dailyXAxisData: [],
     dailySeriesData: [],
@@ -57,7 +78,8 @@
 
   // schemas
   const schemasParams = reactive({
-    ts_code: '000001.SZ',
+    ts_code: '',
+    name: '',
     start_date: 1609430400000,
     end_date: Date.now(),
   });
@@ -66,19 +88,33 @@
       field: 'ts_code',
       component: 'NInput',
       label: 'TS代码',
-      defaultValue: '000001.SZ',
       componentProps: {
         placeholder: '请输入TS代码',
         onInput: (e: any) => {
           console.log(e);
         },
       },
+      rules: [{ validator: validatorTsCode, trigger: ['blur', 'input'] }],
+    },
+    {
+      field: 'name',
+      component: 'NInput',
+      label: '股票名称',
+      defaultValue: '平安银行',
+      componentProps: {
+        placeholder: '请输入股票名称',
+        onInput: (e: any) => {
+          const filteredNames = stockNames.filter((name) => name.includes(e));
+          console.log(filteredNames);
+        },
+      },
+      rules: [{ validator: validatorStockName, trigger: 'blur' }],
     },
     {
       field: 'start_date',
       component: 'NDatePicker',
       label: '开始日期',
-      defaultValue: 1672502400000,
+      defaultValue: 1609430400000,
       componentProps: {
         type: 'date',
         clearable: true,
@@ -108,10 +144,12 @@
   });
 
   onMounted(() => {
+    getStocks();
     handleSubmit(schemasParams);
   });
   async function handleSubmit(values: Recordable) {
     schemasParams.ts_code = values.ts_code;
+    schemasParams.name = values.name;
     schemasParams.start_date = values.start_date;
     schemasParams.end_date = values.end_date;
     const [dailyData, weeklyData, monthlyData] = await Promise.all([
@@ -123,6 +161,8 @@
       window['$message'].info('查询成功');
       chartsParams.dailyXAxisData = dailyData.result.trade_date_list;
       chartsParams.dailySeriesData = dailyData.result.data_list;
+    } else if (dailyData.code == 404) {
+      window['$message'].error('TS代码和股票名称不一致');
     } else {
       window['$message'].error('没有符合条件的日线行情数据, 请重新查询');
     }
@@ -130,6 +170,8 @@
       window['$message'].info('查询成功');
       chartsParams.weeklyXAxisData = weeklyData.result.trade_date_list;
       chartsParams.weeklySeriesData = weeklyData.result.data_list;
+    } else if (weeklyData.code == 404) {
+      window['$message'].error('TS代码和股票名称不一致');
     } else {
       window['$message'].error('没有符合条件的周线行情数据, 请重新查询');
     }
@@ -137,8 +179,17 @@
       window['$message'].info('查询成功');
       chartsParams.monthlyXAxisData = monthlyData.result.trade_date_list;
       chartsParams.monthlySeriesData = monthlyData.result.data_list;
+    } else if (monthlyData.code == 404) {
+      window['$message'].error('TS代码和股票名称不一致');
     } else {
       window['$message'].error('没有符合条件的月线行情数据, 请重新查询');
+    }
+  }
+
+  async function getStocks() {
+    const res = await getStockNames();
+    if (res.code == ResultEnum.SUCCESS) {
+      stockNames = res.result.stock_name;
     }
   }
 
