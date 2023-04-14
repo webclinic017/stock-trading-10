@@ -33,6 +33,13 @@ export const columns = [
     title: '成交时间',
     key: 'deal_date',
     width: 100,
+    render(row) {
+      const date = new Date(row.deal_date);
+      const year = date.getFullYear();
+      const month = ('0' + (date.getMonth() + 1)).slice(-2);
+      const day = ('0' + date.getDate()).slice(-2);
+      return year + '.' + month + '.' + day;
+    },
   },
   {
     title: '订单状态',

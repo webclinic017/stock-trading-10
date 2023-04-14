@@ -2,7 +2,7 @@ from flask import (Blueprint, jsonify, request)
 from ..models import Order
 from .. import db
 from flask import session as flask_session
-from ..utils import Response, OrderResult
+from ..utils import Response, OrderResult, PageResult
 
 bp = Blueprint('order-info', __name__, url_prefix='/v1/order')
 

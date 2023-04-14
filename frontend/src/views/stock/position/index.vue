@@ -218,7 +218,7 @@
 
   // action
   const actionColumn = reactive({
-    width: 150,
+    width: 50,
     title: '操作',
     key: 'action',
     fixed: 'right',
