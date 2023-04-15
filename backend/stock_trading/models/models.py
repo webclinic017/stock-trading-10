@@ -84,6 +84,8 @@ class Company(Base, BaseModel):
     __tablename__ = 'company'
 
     company_id: Mapped[int] = mapped_column(INTEGER(11), primary_key=True)
+    ts_code: Mapped[str] = mapped_column(String(255))
+    exchange: Mapped[str] = mapped_column(String(255))
     chairman: Mapped[str] = mapped_column(String(255))
     reg_capital: Mapped[str] = mapped_column(String(255))
     introduction: Mapped[str] = mapped_column(String(255))

@@ -10,6 +10,7 @@
       :request="loadDataTable"
       :row-key="(row) => row.id"
       ref="actionRef"
+      :actionColumn="actionColumn"
       @edit-change="onEditChange"
       @update:checked-row-keys="onCheckedRow"
       :scroll-x="1590"
@@ -22,12 +23,14 @@
 </template>
 
 <script lang="ts" setup>
-  import { reactive, ref } from 'vue';
-  import { BasicTable } from '@/components/Table';
+  import { h, reactive, ref } from 'vue';
+  import { BasicTable, TableAction } from '@/components/Table';
   import { BasicForm, FormSchema, useForm } from '@/components/Form/index';
   import { columns } from './columns';
   import { ResultEnum } from '@/enums/httpEnum';
   import { getStockInfo } from '@/api/stock/stock';
+  import { useRouter } from 'vue-router';
+  const router = useRouter();
   const actionRef = ref();
 
   // schemas
@@ -78,7 +81,19 @@
     labelWidth: 80,
     schemas,
   });
-
+  const actionColumn = reactive({
+    width: 50,
+    title: '操作',
+    key: 'action',
+    fixed: 'right',
+    align: 'center',
+    render(record) {
+      return h(TableAction, {
+        style: 'button',
+        actions: createActions(record),
+      });
+    },
+  });
   // table
   const loadDataTable = async (res) => {
     const data = await getStockInfo({ ...res, ...schemasParams });
@@ -113,6 +128,17 @@
 
   function handleReset(values: Recordable) {
     console.log(values);
+  }
+  function createActions(record) {
+    return [
+      {
+        label: '详情',
+        onClick: viewDetail.bind(null, record),
+      },
+    ];
+  }
+  function viewDetail(record: Recordable) {
+    router.push({ name: 'company-info', params: { ts_code: record.ts_code } });
   }
 </script>
 

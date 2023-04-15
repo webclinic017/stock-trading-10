@@ -35,6 +35,15 @@ const routes: Array<RouteRecordRaw> = [
         component: () => import('@/views/stock/stockInfo/index.vue'),
       },
       {
+        path: 'company-info/:ts_code?',
+        name: 'company-info',
+        meta: {
+          title: '公司信息',
+          hidden: true,
+        },
+        component: () => import('@/views/stock/companyInfo/index.vue'),
+      },
+      {
         path: 'position',
         name: 'position',
         meta: {

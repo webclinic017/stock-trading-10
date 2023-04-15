@@ -83,5 +83,22 @@ def get_realtime_info():
     trade_date_list = df['trade_date'].tolist()
     data_list = df[['open', 'close', 'low', 'high']].values.tolist()
 
-if __name__ == '__main__':
-    get_realtime_info()
+
+# get company info
+def get_company_info():
+    df = pro.stock_company(**{
+        "ts_code": "",
+        "exchange": "",
+        "status": "",
+        "limit": "",
+        "offset": ""
+    }, fields=[
+        "ts_code",
+        "exchange",
+        "chairman",
+        "reg_capital",
+        "website",
+        "main_business",
+        "introduction"
+    ])
+    df.to_sql(name='company', con=engine, if_exists='append', index=False)
