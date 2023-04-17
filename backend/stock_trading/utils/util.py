@@ -73,15 +73,9 @@ def get_stock_info():
 
 
 # get long_hu_bang data
-def get_long_hu_bang():
-    df = pro.top_list(trade_date='20230407')
+def get_dtl_data(trade_date):
+    df = pro.top_list(trade_date=trade_date)
     df.to_sql(name='dtl', con=engine, if_exists='append', index=False)
-
-
-def get_realtime_info():
-    df = pro.daily(ts_code='000001.SZ', start_date='20230411', end_date='20230411')
-    trade_date_list = df['trade_date'].tolist()
-    data_list = df[['open', 'close', 'low', 'high']].values.tolist()
 
 
 # get company info

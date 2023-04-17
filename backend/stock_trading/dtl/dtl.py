@@ -3,6 +3,7 @@ from flask import (Blueprint, jsonify, request)
 from ..models import Dtl
 from .. import db
 from ..utils import Response, PageResult
+from ..utils.util import get_dtl_data
 
 bp = Blueprint('dtl-info', __name__, url_prefix='/v1/dtl')
 
@@ -16,6 +17,7 @@ def get_stock_info():
     ts_code = request.json.get('ts_code')
     name = request.json.get('name')
     trade_date = request.json.get('trade_date')
+    get_dtl_data(trade_date=datetime.fromtimestamp(trade_date/1000).strftime('%Y%m%d'))
     query = session.query(Dtl)
     if ts_code:
         query = query.filter_by(ts_code=ts_code)
