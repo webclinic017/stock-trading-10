@@ -117,3 +117,18 @@ export function deleteUser(params) {
     }
   );
 }
+/**
+ * @description: 用户注册
+ */
+export function userRegister(params) {
+  return http.request<BasicResponseModel>(
+    {
+      url: '/v1/user/register',
+      method: 'POST',
+      params,
+    },
+    {
+      isTransformResponse: false,
+    }
+  );
+}

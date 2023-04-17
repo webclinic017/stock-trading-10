@@ -35,8 +35,7 @@ def get_market(code_string):
 
 # 调用tushare接口获取股票实时价格
 def get_market_value(ts_code):
-    regex = r'^(\d{6})(\.(SH|SZ))$'
-
+    regex = r'^(\d{6})(\.(SH|SZ|IB|BJ))$'
     match = re.match(regex, ts_code)
     if match:
         ts_code = ts_code[:-3]

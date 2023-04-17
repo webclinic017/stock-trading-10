@@ -44,9 +44,6 @@
               <div class="flex-initial">
                 <n-checkbox v-model:checked="autoLogin">自动登录</n-checkbox>
               </div>
-              <div class="flex-initial order-last">
-                <a href="javascript:">忘记密码</a>
-              </div>
             </div>
           </n-form-item>
           <n-form-item>
@@ -57,7 +54,7 @@
           <n-form-item class="default-color">
             <div class="flex view-account-other">
               <div class="flex-initial" style="margin-left: auto">
-                <a href="javascript:">注册账号</a>
+                <a @click="register">注册账号</a>
               </div>
             </div>
           </n-form-item>
@@ -65,17 +62,56 @@
       </div>
     </div>
   </div>
+  <n-modal v-model:show="showModal" :show-icon="false" preset="dialog" title="用户注册">
+    <n-form
+      :model="formParams"
+      :rules="formRules"
+      ref="formRef"
+      label-placement="left"
+      :label-width="80"
+      class="py-4"
+    >
+      <n-form-item label="姓名" path="name">
+        <n-input placeholder="请输入姓名" v-model:value="formParams.name" />
+      </n-form-item>
+      <n-form-item label="昵称" path="nick_name">
+        <n-input placeholder="请输入昵称" v-model:value="formParams.nick_name" />
+      </n-form-item>
+      <n-form-item label="联系方式" path="phone">
+        <n-input placeholder="请输入联系方式" v-model:value="formParams.phone" />
+      </n-form-item>
+      <n-form-item label="性别" path="sex">
+        <n-radio-group v-model:value="formParams.sex" name="sex">
+          <n-space>
+            <n-radio value="male">男</n-radio>
+            <n-radio value="female">女</n-radio>
+          </n-space>
+        </n-radio-group>
+      </n-form-item>
+      <n-form-item label="密码" path="password">
+        <n-input placeholder="请输入密码" v-model:value="formParams.password" />
+      </n-form-item>
+    </n-form>
+
+    <template #action>
+      <n-space>
+        <n-button @click="() => (showModal = false)">取消</n-button>
+        <n-button type="info" @click="confirmForm">确定</n-button>
+      </n-space>
+    </template>
+  </n-modal>
 </template>
 
 <script lang="ts" setup>
   import { reactive, ref } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
   import { useUserStore } from '@/store/modules/user';
-  import { useMessage } from 'naive-ui';
+  import { FormRules, useMessage } from 'naive-ui';
   import { ResultEnum } from '@/enums/httpEnum';
   import { PersonOutline, LockClosedOutline } from '@vicons/ionicons5';
   import { PageEnum } from '@/enums/pageEnum';
   import { websiteConfig } from '@/config/website.config';
+  import { userRegister } from '@/api/user/user';
   interface FormState {
     name: string;
     password: string;
@@ -85,6 +121,7 @@
   const message = useMessage();
   const loading = ref(false);
   const autoLogin = ref(true);
+  const showModal = ref(false);
   const LOGIN_NAME = PageEnum.BASE_LOGIN_NAME;
 
   const formInline = reactive({
@@ -101,6 +138,61 @@
   const userStore = useUserStore();
   const router = useRouter();
   const route = useRoute();
+  const formParams = reactive({
+    name: '',
+    nick_name: '',
+    phone: '',
+    password: '',
+    sex: '',
+  });
+  // form
+  const formRules: FormRules = {
+    phone: [
+      {
+        required: true,
+        trigger: ['blur', 'input'],
+        message: '请输入股票代码',
+      },
+      {
+        validator: (rule, value) => {
+          const regex = /^[1][3-9][0-9]{9}$/;
+          if (regex.test(value)) {
+            return Promise.resolve();
+          }
+          return Promise.reject(new Error('请输入正确的手机号码'));
+        },
+        trigger: ['blur', 'input'],
+      },
+    ],
+    name: [
+      {
+        required: true,
+        trigger: ['blur', 'input'],
+        message: '请输入姓名',
+      },
+    ],
+    nick_name: [
+      {
+        required: true,
+        trigger: ['blur', 'input'],
+        message: '请输入昵称',
+      },
+    ],
+    password: [
+      {
+        required: true,
+        trigger: ['blur', 'input'],
+        message: '请输入密码',
+      },
+    ],
+    sex: [
+      {
+        required: true,
+        trigger: ['blur', 'input'],
+        message: '请选择性别',
+      },
+    ],
+  };
 
   // 登录的方法
   const handleSubmit = (e) => {
@@ -136,6 +228,30 @@
       }
     });
   };
+
+  function register() {
+    showModal.value = true;
+    // router.push({ name: 'Register' });
+  }
+  function confirmForm(e) {
+    e.preventDefault();
+    formRef.value.validate(async (errors) => {
+      if (!errors) {
+        const data = await userRegister(formParams);
+        if (data.code == ResultEnum.SUCCESS) {
+          window['$message'].info('用户注册成功');
+        } else {
+          window['$message'].error('用户注册失败, 请检查操作');
+        }
+        // 关闭弹窗
+        setTimeout(() => {
+          showModal.value = false;
+        });
+      } else {
+        window['$message'].error('用户注册失败, 请检查操作');
+      }
+    });
+  }
 </script>
 
 <style lang="less" scoped>

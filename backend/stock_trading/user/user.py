@@ -182,3 +182,38 @@ def get_user_info():
         response = Response(200, "get admin info success", UserInfoResult(user, admin_permissions), "success")
 
     return jsonify(response.as_dict())
+
+
+@bp.route('/register', methods=('POST',))
+def register_user():
+    account = Account()
+    account.asset = 20000
+    account.market_value = 0
+    account.money_rest = 20000
+    session.add(account)
+    session.commit()
+
+    # 获得此前创建的account_id
+    account_id = account.account_id
+    user = User()
+    user.name = request.json.get('name')
+    user.nick_name = request.json.get('nick_name')
+    user.phone = request.json.get('phone')
+    user.sex = request.json.get('sex')
+    user.password = request.json.get('password')
+    user.role = 'user'
+    user.status = '启用'
+    user.create_time = datetime.now()
+    user.update_time = datetime.now()
+    user.account_id = account_id
+    session.add(user)
+    try:
+        session.commit()
+    except SQLAlchemyError as e:
+        session.rollback()
+        response = Response("fail", "add user fail")
+    else:
+        response = Response("200", "add user success")
+    finally:
+        session.close()
+    return jsonify(response.as_dict())

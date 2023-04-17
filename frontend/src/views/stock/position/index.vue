@@ -151,6 +151,9 @@
       {
         validator: (rule, value) => {
           if (formParams.ts_code.substring(0, 3) === '688') {
+            if (formParams.availableNumber < 200) {
+              return Promise.reject(new Error('余额不足 无法购入'));
+            }
             const min = 200;
             const max = formParams.availableNumber;
             if (value < min || value > max) {
@@ -160,6 +163,9 @@
             }
             return true;
           } else {
+            if (formParams.availableNumber < 100) {
+              return Promise.reject(new Error('余额不足 无法购入'));
+            }
             const min = 100;
             const max = formParams.availableNumber;
             if (value < min || value > max || value % 100 !== 0) {
