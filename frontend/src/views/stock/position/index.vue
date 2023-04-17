@@ -49,8 +49,8 @@
         <n-form-item label="市场价格" path="deal_price">
           <n-input placeholder="" v-model:value="formParams.market_price" disabled />
         </n-form-item>
-        <n-form-item label="购入数量" path="number">
-          <n-input placeholder="请输入购入数量" v-model:value="formParams.number" />
+        <n-form-item label="购入数量" path="buy_number">
+          <n-input placeholder="请输入购入数量" v-model:value="formParams.buy_number" />
         </n-form-item>
       </n-form>
 
@@ -79,11 +79,8 @@
         <n-form-item label="市场价格" path="market_price">
           <n-input v-model:value="sellFormParams.market_price" disabled />
         </n-form-item>
-        <n-form-item label="差额" path="difference">
-          <n-input v-model:value="sellFormParams.difference" disabled />
-        </n-form-item>
-        <n-form-item label="股票数量" path="number">
-          <n-input v-model:value="sellFormParams.number" disabled />
+        <n-form-item label="股票持有数量" path="hold_number">
+          <n-input v-model:value="sellFormParams.hold_number" disabled />
         </n-form-item>
         <n-form-item label="卖出数量" path="sell_number">
           <n-input v-model:value="sellFormParams.sell_number" />
@@ -122,7 +119,7 @@
   const formParams = reactive({
     ts_code: '',
     market_price: '',
-    number: '',
+    buy_number: '',
     availableNumber: NaN,
   });
   // form
@@ -145,7 +142,7 @@
         trigger: ['blur', 'input'],
       },
     ],
-    number: [
+    buy_number: [
       {
         required: true,
         trigger: ['blur', 'input'],
@@ -153,12 +150,27 @@
       },
       {
         validator: (rule, value) => {
-          const min = 1;
-          const max = formParams.availableNumber;
-          if (value < min || value > max) {
-            return Promise.reject(new Error(`购入数量必须在1和${formParams.availableNumber}之间`));
+          if (formParams.ts_code.substring(0, 3) === '688') {
+            const min = 200;
+            const max = formParams.availableNumber;
+            if (value < min || value > max) {
+              return Promise.reject(
+                new Error(`购入数量最少为200，且必须在200和${formParams.availableNumber}之间`)
+              );
+            }
+            return true;
+          } else {
+            const min = 100;
+            const max = formParams.availableNumber;
+            if (value < min || value > max || value % 100 !== 0) {
+              return Promise.reject(
+                new Error(
+                  `购入数量以100的整数倍递增如100股、200股、300股，且必须在100和${formParams.availableNumber}之间`
+                )
+              );
+            }
+            return true;
           }
-          return true;
         },
         trigger: ['blur', 'input'],
       },
@@ -167,10 +179,9 @@
   const sellFormParams = reactive({
     ts_code: '',
     deal_price: '',
-    number: '',
+    hold_number: '',
     market_price: '',
     sell_number: '',
-    difference: '',
   });
   const sellFormRules: FormRules = {
     sell_number: [
@@ -181,12 +192,37 @@
       },
       {
         validator: (rule, value) => {
-          const min = 1;
-          const max = sellFormParams.number;
-          if (value < min || value > max) {
-            return Promise.reject(new Error(`购入数量必须在1和${sellFormParams.number}之间`));
+          if (formParams.ts_code.substring(0, 3) === '688') {
+            if (value < 200) {
+              sellFormParams.sell_number = sellFormParams.hold_number;
+              window['$message'].info('科创股少于200必须全部卖出');
+              return true;
+            } else {
+              const min = 200;
+              const max = sellFormParams.hold_number;
+              if (value < min || value > max) {
+                return Promise.reject(
+                  new Error(`卖出数量最少为200，且必须在200和${sellFormParams.hold_number}之间`)
+                );
+              }
+              return true;
+            }
+          } else {
+            if (value < 100) {
+              sellFormParams.sell_number = sellFormParams.hold_number;
+              window['$message'].info('非科创股少于100只股票必须全部卖出');
+              return true;
+            } else {
+              const min = 100;
+              const max = sellFormParams.hold_number;
+              if (value < min || value > max) {
+                return Promise.reject(
+                  new Error(`卖出数量必须应在1至${sellFormParams.hold_number}之间`)
+                );
+              }
+              return true;
+            }
           }
-          return true;
         },
         trigger: ['blur', 'input'],
       },
@@ -278,9 +314,8 @@
     showSellModal.value = true;
     sellFormParams.ts_code = record.ts_code;
     sellFormParams.deal_price = record.deal_price;
-    sellFormParams.number = record.number;
-    sellFormParams.market_price = record.market_value / record.number;
-    sellFormParams.difference = sellFormParams.market_price - sellFormParams.deal_price;
+    sellFormParams.hold_number = record.number;
+    sellFormParams.market_price = record.market_price;
     record.onEdit?.(true);
   }
 
@@ -327,15 +362,15 @@
         } else {
           window['$message'].error('股票购买失败, 请检查操作');
         }
+        clearFormParams();
         reloadTable();
         // 关闭弹窗
         setTimeout(() => {
           showModal.value = false;
         });
       } else {
-        window['$message'].error('');
+        window['$message'].error('股票购买失败, 请检查数据');
       }
-      clearFormParams();
       formBtnLoading.value = false;
     });
   }

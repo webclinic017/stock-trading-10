@@ -41,7 +41,7 @@ def buy_stock():
         market = get_market(ts_code)
         ts_code = ts_code + "." + market
     market_price = float(request.json.get('market_price'))
-    number = float(request.json.get('number'))
+    number = float(request.json.get('buy_number'))
     account_id = flask_session.get('account_id')
 
     # 增加持仓
