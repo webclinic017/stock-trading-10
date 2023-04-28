@@ -23,7 +23,7 @@ const routes: Array<RouteRecordRaw> = [
     meta: {
       title: '股票信息',
       icon: renderIcon(ProfileOutlined),
-      sort: 2,
+      sort: 3,
     },
     children: [
       {

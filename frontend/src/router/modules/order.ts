@@ -23,7 +23,7 @@ const routes: Array<RouteRecordRaw> = [
     meta: {
       title: '订单信息',
       icon: renderIcon(WalletOutlined),
-      sort: 3,
+      sort: 5,
     },
     children: [
       {
