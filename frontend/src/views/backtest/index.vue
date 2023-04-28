@@ -51,7 +51,7 @@
           console.log(e);
         },
       },
-      rules: [{ required: true, trigger: ['blur', 'input'] }],
+      rules: [{ required: true }],
     },
     {
       field: 'start_date',
@@ -65,7 +65,7 @@
           console.log(e);
         },
       },
-      rules: [{ required: true, trigger: ['blur', 'input'] }],
+      rules: [{ required: true }],
     },
     {
       field: 'end_date',
@@ -79,7 +79,7 @@
           console.log(e);
         },
       },
-      rules: [{ required: true, trigger: ['blur', 'input'] }],
+      rules: [{ required: true }],
     },
   ];
   const [register, {}] = useForm({
@@ -92,6 +92,10 @@
     schemasParams.cash = values.cash;
     schemasParams.start_date = values.start_date;
     schemasParams.end_date = values.end_date;
+    if (schemasParams.end_date < schemasParams.start_date) {
+      window['$message'].error('结束日期不能小于开始日期');
+      return;
+    }
     const data = await getBackTestInfo({ ...schemasParams });
     if (data.code == ResultEnum.SUCCESS) {
       window['$message'].info('查询成功');
