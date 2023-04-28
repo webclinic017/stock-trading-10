@@ -16,9 +16,9 @@ def get_backtest_info():
     start_date = request.json.get('start_date')
     end_date = request.json.get('end_date')
     start_date, end_date = date_deal(start_date, end_date)
-    end_cash = backtest(ts_code, start_date, end_date, cash)
+    end_cash, log = backtest(ts_code, start_date, end_date, cash)
 
-    result = BackTestResult(end_cash)
+    result = BackTestResult(end_cash, log)
     if end_cash:
         response = Response(200, "back test success", result, "success")
     else:

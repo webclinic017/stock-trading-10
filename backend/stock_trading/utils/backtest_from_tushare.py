@@ -24,9 +24,12 @@ class TestStrategy(bt.Strategy):
     def log(self, txt, dt=None):
         # 记录策略的执行日志
         dt = dt or self.datas[0].datetime.date(0)
-        print('%s, %s' % (dt.isoformat(), txt))
+        log_message = '%s, %s' % (dt.isoformat(), txt)
+        self.log_buffer.append(log_message)  # 将日志消息添加到缓冲区
+        print(log_message)  # 在控制台打印日志消息
 
     def __init__(self):
+        self.log_buffer = []  # 用于保存日志消息的列表
         # 保存收盘价的引用
         self.dataclose = self.datas[0].close
         # 跟踪挂单
@@ -122,10 +125,13 @@ def backtest(ts_code='000001.SZ', start_date='20180701', end_date='20180718', ca
     # 引擎运行前打印期出资金
     print('组合期初资金: %.2f' % cerebro.broker.getvalue())
     cerebro.run()
+    strategy = cerebro.run()[0]  # 获取策略实例
+
     # 引擎运行后打期末资金
     print('组合期末资金: %.2f' % cerebro.broker.getvalue())
-    return cerebro.broker.getvalue()
+    return cerebro.broker.getvalue(), '\n'.join(strategy.log_buffer)
 
 
 if __name__ == '__main__':
-    final_money = backtest(ts_code='000001.SZ', start_date='20180701', end_date='20180718', cash=1000.0)
+    final_money, log = backtest(ts_code='000001.SZ', start_date='20180701', end_date='20180718', cash=1000.0)
+    print(">>>>>>>", log)

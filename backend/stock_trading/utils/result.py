@@ -136,10 +136,12 @@ class StockNameResult(Result):
 
 
 class BackTestResult(Result):
-    def __init__(self, end_cash=None):
+    def __init__(self, end_cash=None, log=None):
         self.end_cash = end_cash
+        self.log = log
 
     def as_dict(self):
         return {
             'end_cash': self.end_cash,
+            'log': self.log,
         }

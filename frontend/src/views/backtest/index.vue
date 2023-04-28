@@ -6,6 +6,8 @@
       </template>
     </BasicForm>
     <n-card :bordered="false" title="期末资金">{{ params.end_cash }}</n-card>
+    <n-card :bordered="false" title="日志" />
+    <n-card :bordered="false" v-html="params.log" />
   </div>
 </template>
 
@@ -17,6 +19,7 @@
 
   const params = reactive({
     end_cash: 0,
+    log: '',
   });
 
   // schemas
@@ -100,6 +103,9 @@
     if (data.code == ResultEnum.SUCCESS) {
       window['$message'].info('查询成功');
       params.end_cash = data.result.end_cash;
+      params.log =
+        '&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp;' +
+        data.result.log.replace(/\n/g, '<br/>\n&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp;');
     } else {
       window['$message'].error('没有符合条件的数据, 请重新查询');
     }
