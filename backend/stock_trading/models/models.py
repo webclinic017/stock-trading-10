@@ -96,8 +96,7 @@ class Company(Base, BaseModel):
 class Dtl(Base, BaseModel):
     __tablename__ = 'dtl'
 
-    dtl_id: Mapped[int] = mapped_column(INTEGER(11), primary_key=True)
-    ts_code: Mapped[str] = mapped_column(String(255))
+    ts_code: Mapped[str] = mapped_column(String(255), primary_key=True)
     trade_date: Mapped[str] = mapped_column(String(255))
     name: Mapped[str] = mapped_column(String(255))
     close: Mapped[float] = mapped_column(Float())

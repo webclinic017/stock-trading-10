@@ -62,7 +62,6 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS `dtl`;
 CREATE TABLE `dtl` (
-  `dtl_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '龙虎榜id',
   `ts_code` varchar(255) DEFAULT NULL COMMENT 'TS代码',
   `trade_date` varchar(255) DEFAULT NULL COMMENT '交易日期',
   `name` varchar(255) DEFAULT NULL COMMENT '名称',

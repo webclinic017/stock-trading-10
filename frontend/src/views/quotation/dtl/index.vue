@@ -59,6 +59,7 @@
   // schemas
   const schemasParams = reactive({
     ts_code: '',
+    name: '',
     trade_date: Date.now(),
   });
   const schemas: FormSchema[] = [
@@ -84,7 +85,7 @@
           console.log(e);
         },
       },
-      rules: [{ validator: validatorStockName, trigger: 'blur' }],
+      rules: [{ validator: validatorStockName, trigger: ['blur', 'input']}],
     },
     {
       field: 'trade_date',
@@ -134,6 +135,7 @@
 
   async function handleSubmit(values: Recordable) {
     schemasParams.ts_code = values.ts_code;
+    schemasParams.name = values.name;
     schemasParams.trade_date = values.trade_date;
     reloadTable();
   }

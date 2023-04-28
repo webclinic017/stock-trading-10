@@ -155,7 +155,17 @@
     phone: {
       required: true,
       trigger: ['blur', 'input'],
-      message: '请输入名称',
+      message: '请输入联系方式',
+    },
+    sex: {
+      required: true,
+      trigger: ['blur', 'input'],
+      message: '请选择性别',
+    },
+    role: {
+      required: true,
+      trigger: ['blur', 'input'],
+      message: '请选择角色',
     },
   };
   const formParams = reactive({
