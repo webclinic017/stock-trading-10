@@ -74,7 +74,7 @@ def get_stock_info():
 # get long_hu_bang data
 def get_dtl_data(trade_date):
     df = pro.top_list(trade_date=trade_date)
-    df.to_sql(name='dtl', con=engine, if_exists='append', index=False)
+    df.to_sql(name='dtl', con=engine, if_exists='replace', index=False)
 
 
 # get company info
