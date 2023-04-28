@@ -40,17 +40,17 @@
     market: '',
   });
   const schemas: FormSchema[] = [
-    {
-      field: 'ts_code',
-      component: 'NInput',
-      label: 'TS代码',
-      componentProps: {
-        placeholder: '请输入TS代码',
-        onInput: (e: any) => {
-          console.log(e);
-        },
-      },
-    },
+    // {
+    //   field: 'ts_code',
+    //   component: 'NInput',
+    //   label: 'TS代码',
+    //   componentProps: {
+    //     placeholder: '请输入TS代码',
+    //     onInput: (e: any) => {
+    //       console.log(e);
+    //     },
+    //   },
+    // },
     {
       field: 'name',
       component: 'NInput',

@@ -88,18 +88,18 @@
     end_date: Date.now(),
   });
   const schemas: FormSchema[] = [
-    {
-      field: 'ts_code',
-      component: 'NInput',
-      label: 'TS代码',
-      componentProps: {
-        placeholder: '请输入TS代码',
-        onInput: (e: any) => {
-          console.log(e);
-        },
-      },
-      rules: [{ validator: validatorTsCode, trigger: ['blur', 'input'] }],
-    },
+    // {
+    //   field: 'ts_code',
+    //   component: 'NInput',
+    //   label: 'TS代码',
+    //   componentProps: {
+    //     placeholder: '请输入TS代码',
+    //     onInput: (e: any) => {
+    //       console.log(e);
+    //     },
+    //   },
+    //   rules: [{ validator: validatorTsCode, trigger: ['blur', 'input'] }],
+    // },
     {
       field: 'name',
       component: 'NInput',

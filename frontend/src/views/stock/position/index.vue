@@ -198,8 +198,8 @@
       },
       {
         validator: (rule, value) => {
-          if (formParams.ts_code.substring(0, 3) === '688') {
-            if (value < 200) {
+          if (sellFormParams.ts_code.substring(0, 3) === '688') {
+            if (parseInt(sellFormParams.hold_number) <= 200) {
               sellFormParams.sell_number = sellFormParams.hold_number;
               window['$message'].info('科创股少于200必须全部卖出');
               return true;
@@ -214,7 +214,7 @@
               return true;
             }
           } else {
-            if (value < 100) {
+            if (parseInt(sellFormParams.hold_number) <= 100) {
               sellFormParams.sell_number = sellFormParams.hold_number;
               window['$message'].info('非科创股少于100只股票必须全部卖出');
               return true;

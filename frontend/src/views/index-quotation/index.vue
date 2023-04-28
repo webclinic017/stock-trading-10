@@ -82,7 +82,7 @@
       field: 'start_date',
       component: 'NDatePicker',
       label: '开始日期',
-      defaultValue: 1672502400000,
+      defaultValue: 1609430400000,
       componentProps: {
         type: 'date',
         clearable: true,
