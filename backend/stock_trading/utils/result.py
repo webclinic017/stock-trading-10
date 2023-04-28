@@ -133,3 +133,13 @@ class StockNameResult(Result):
         return {
             'stock_name': self.stock_name,
         }
+
+
+class BackTestResult(Result):
+    def __init__(self, end_cash=None):
+        self.end_cash = end_cash
+
+    def as_dict(self):
+        return {
+            'end_cash': self.end_cash,
+        }

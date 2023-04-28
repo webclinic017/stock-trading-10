@@ -47,7 +47,7 @@ def create_app(test_config=None):
     def hello():
         return 'Hello, World!'
 
-    from . import user, stock, position, order, dtl, quotation, index_quotation, account, company
+    from . import user, stock, position, order, dtl, quotation, index_quotation, account, company, backtest
     app.register_blueprint(user.user_bp)
     app.register_blueprint(stock.stock_bp)
     app.register_blueprint(position.position_bp)
@@ -57,6 +57,7 @@ def create_app(test_config=None):
     app.register_blueprint(index_quotation.index_quotation_bp)
     app.register_blueprint(account.account_bp)
     app.register_blueprint(company.company_bp)
+    app.register_blueprint(backtest.backtest_bp)
 
     Thread(target=start_scheduler).start()
 
